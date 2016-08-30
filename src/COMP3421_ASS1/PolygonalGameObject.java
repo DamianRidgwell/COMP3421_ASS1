@@ -1,5 +1,6 @@
 package COMP3421_ASS1;
 
+import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 
 /**
@@ -30,7 +31,7 @@ public class PolygonalGameObject extends GameObject {
      * @param parent The parent in the scene tree
      * @param points A list of points defining the polygon
      * @param fillColour The fill colour in [r, g, b, a] form
-     * @param lineColour The outlien colour in [r, g, b, a] form
+     * @param lineColour The outline colour in [r, g, b, a] form
      */
     public PolygonalGameObject(GameObject parent, double points[],
             double[] fillColour, double[] lineColour) {
@@ -110,13 +111,30 @@ public class PolygonalGameObject extends GameObject {
      * if the fill colour is non-null, fill the polygon with this colour
      * if the line colour is non-null, draw the outline with this colour
      * 
-     * @see ass1.GameObject#drawSelf(javax.media.opengl.GL2)
+     * @see COMP3421_ASS1.GameObject#drawSelf(javax.media.opengl.GL2)
      */
     @Override
     public void drawSelf(GL2 gl) {
 
         // TODO: Write this method
+        if (myFillColour != null) {
+            gl.glBegin(GL2.GL_POLYGON);
+                for (int i = 0; i < (myPoints.length); i += 2) {
+                    gl.glColor4d(myFillColour[0], myFillColour[1], myFillColour[2], myFillColour[3]);
+                    gl.glVertex2d(myPoints[i], myPoints[i+1]);
+                }
+            gl.glEnd();
+        }
 
+        if (myLineColour != null) {
+            gl.glBegin(GL2.GL_POLYGON);
+                gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_LINE);
+                for (int i = 0; i < myPoints.length; i += 2) {
+                    gl.glColor4d(myLineColour[0], myLineColour[1], myLineColour[2], myLineColour[3]);
+                    gl.glVertex2d(myPoints[i], myPoints[i + 1]);
+                }
+            gl.glEnd();
+        }
     }
 
 

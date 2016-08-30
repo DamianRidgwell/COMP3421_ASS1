@@ -1,6 +1,8 @@
 package COMP3421_ASS1;
 
+import java.math.MathContext;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.jogamp.opengl.GL2;
@@ -257,7 +259,6 @@ public class GameObject {
      * @param gl
      */
     public void draw(GL2 gl) {
-        
         // don't draw if it is not showing
         if (!amShowing) {
             return;
@@ -266,8 +267,20 @@ public class GameObject {
         // TODO: setting the model transform appropriately  
         // draw the object (Call drawSelf() to draw the object itself) 
         // and all its children recursively
-       
-        
+        gl.glMatrixMode(GL2.GL_MODELVIEW);
+        if (this == ROOT) {
+            gl.glLoadIdentity();
+        }
+        gl.glPushMatrix();
+        gl.glTranslated(myTranslation[0], myTranslation[1], 0);
+        gl.glRotated(myRotation, 0, 0, 1);
+        gl.glScaled(myScale, myScale, 1);
+        drawSelf(gl);
+        for (GameObject child: myChildren
+             ) {
+            child.draw(gl);
+        }
+        gl.glPopMatrix();
     }
 
     /**
@@ -275,20 +288,35 @@ public class GameObject {
      * 
      * TODO: Write this method
      * 
-     * @return a point in world coordinats in [x,y] form
+     * @return a point in world coordinates in [x,y] form
      */
     public double[] getGlobalPosition() {
-        double[] p = {0, 0, 1};
+        double[] pPos = ROOT.getPosition();
+        double pRot = ROOT.getRotation();
+        double pScale = ROOT.getScale();
+
         if (myParent != null) {
-            p = this.myParent.getGlobalPosition();
+            pPos = myParent.getGlobalPosition();
+            pRot = myParent.getGlobalRotation();
+            pScale = myParent.getGlobalScale();
+
         } else {
-            return p;
+            return pPos;
         }
 
-        double[][] transMat = MathUtil.translationMatrix(myTranslation);
-        p = MathUtil.multiply(transMat, p);
+        double[][] m = MathUtil.translationMatrix(pPos);
+        m = MathUtil.multiply(m, MathUtil.rotationMatrix(pRot));
+        m = MathUtil.multiply(m, MathUtil.scaleMatrix(pScale));
+        double[] myTransVector = new double[3];
+        myTransVector[0] = myTranslation[0];
+        myTransVector[1] = myTranslation[1];
+        myTransVector[2] = 1;
+        double[] p = MathUtil.multiply(m, myTransVector);
+        double[] globalPos = new double[2];
+        globalPos[0] = p[0];
+        globalPos[1] = p[1];
 
-        return p; 
+        return p;
     }
 
     /**
@@ -300,14 +328,14 @@ public class GameObject {
      * normalized to the range (-180, 180) degrees. 
      */
     public double getGlobalRotation() {
-        double r = 0;
+        double r = ROOT.getRotation();
         if (myParent != null) {
             r = myParent.getGlobalRotation();
         } else {
             return r;
         }
 
-        return r + myRotation;
+        return MathUtil.normaliseAngle(r + myRotation);
     }
 
     /**
@@ -318,7 +346,13 @@ public class GameObject {
      * @return the global scale of the object 
      */
     public double getGlobalScale() {
-        return 1.0;
+        double pScale = ROOT.getScale();
+        if (myParent != null) {
+            pScale = myParent.getGlobalScale();
+        } else {
+            return pScale;
+        }
+        return pScale * myScale;
     }
 
     /**
@@ -331,11 +365,29 @@ public class GameObject {
      * @param parent
      */
     public void setParent(GameObject parent) {
-        
+        double[] globalPos = getGlobalPosition();
+        double globalRot = getGlobalRotation();
+        double globalScale = getGlobalScale();
+
         myParent.myChildren.remove(this);
         myParent = parent;
         myParent.myChildren.add(this);
-        
+
+        myRotation = MathUtil.normaliseAngle(globalRot - myParent.getGlobalRotation());
+        myScale = globalScale / myParent.getGlobalScale();
+
+        double[] pGlobalPos = myParent.getGlobalPosition();
+        double[] pInvGlobalPos = new double[3];
+        pInvGlobalPos[0] = pGlobalPos[0] * -1;
+        pInvGlobalPos[1] = pGlobalPos[1] * -1;
+        pInvGlobalPos[2] = 1;
+
+        double[][] invMat = MathUtil.scaleMatrix(1/myParent.getGlobalScale());
+        invMat = MathUtil.multiply(invMat, MathUtil.rotationMatrix(myParent.getGlobalRotation() * -1));
+        invMat = MathUtil.multiply(invMat, MathUtil.translationMatrix(pInvGlobalPos));
+
+        double[] localTrans = MathUtil.multiply(invMat, globalPos);
+        setPosition(localTrans[0], localTrans[1]);
     }
     
 
