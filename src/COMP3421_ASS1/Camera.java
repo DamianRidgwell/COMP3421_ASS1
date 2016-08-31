@@ -18,7 +18,7 @@ public class Camera extends GameObject {
     public Camera(GameObject parent) {
         super(parent);
 
-        myBackground = new float[4];
+        myBackground = new float[]{1,1,1,1};
     }
 
     public Camera() {
@@ -39,10 +39,13 @@ public class Camera extends GameObject {
    
     
     public void setView(GL2 gl) {
-        
         // TODO 1. clear the view to the background colour
+        gl.glColor4d(myBackground[0], myBackground[1], myBackground[2], myBackground[3]); // black
+        gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
         
-        // TODO 2. set the view matrix to account for the camera's position         
+        // TODO 2. set the view matrix to account for the camera's position
+        gl.glMatrixMode(GL2.GL_PROJECTION);
+        gl.glLoadIdentity();
     }
 
     public void reshape(GL2 gl, int x, int y, int width, int height) {

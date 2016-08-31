@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 
 
@@ -264,8 +265,8 @@ public class GameObject {
             return;
         }
 
-        // TODO: setting the model transform appropriately  
-        // draw the object (Call drawSelf() to draw the object itself) 
+        // TODO: setting the model transform appropriately
+        // draw the object (Call drawSelf() to draw the object itself)
         // and all its children recursively
         gl.glMatrixMode(GL2.GL_MODELVIEW);
         if (this == ROOT) {

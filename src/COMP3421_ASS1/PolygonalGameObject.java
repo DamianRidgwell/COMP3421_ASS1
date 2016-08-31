@@ -119,18 +119,18 @@ public class PolygonalGameObject extends GameObject {
         // TODO: Write this method
         if (myFillColour != null) {
             gl.glBegin(GL2.GL_POLYGON);
+                gl.glColor4d(myFillColour[0], myFillColour[1], myFillColour[2], myFillColour[3]);
                 for (int i = 0; i < (myPoints.length); i += 2) {
-                    gl.glColor4d(myFillColour[0], myFillColour[1], myFillColour[2], myFillColour[3]);
                     gl.glVertex2d(myPoints[i], myPoints[i+1]);
                 }
             gl.glEnd();
         }
 
         if (myLineColour != null) {
-            gl.glBegin(GL2.GL_POLYGON);
+            gl.glBegin(GL2.GL_LINE_LOOP);
                 gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_LINE);
+                gl.glColor4d(myLineColour[0], myLineColour[1], myLineColour[2], myLineColour[3]);
                 for (int i = 0; i < myPoints.length; i += 2) {
-                    gl.glColor4d(myLineColour[0], myLineColour[1], myLineColour[2], myLineColour[3]);
                     gl.glVertex2d(myPoints[i], myPoints[i + 1]);
                 }
             gl.glEnd();

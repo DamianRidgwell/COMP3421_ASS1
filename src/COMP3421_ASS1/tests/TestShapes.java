@@ -24,13 +24,13 @@ public class TestShapes {
         double points[] = {0,0,1,1,0,1};
         PolygonalGameObject p = new PolygonalGameObject(GameObject.ROOT,points,null,white);
         p.rotate(45);
-        /*
+
         // Create a circle 
         double cFillCol[] = {1,0.5,0.5,1};
         CircularGameObject c = new CircularGameObject(GameObject.ROOT,cFillCol,white);
-        c.setPosition(1, -1);  
-        c.setScale(0.5);  
-       
+        c.setPosition(0.3, 0);
+        c.setScale(0.75);
+
         //Create a line
         double lineCol [] = {0.5,1,0.5,1};
         LineGameObject l = new LineGameObject(GameObject.ROOT,0.5,0.5,1,1,lineCol);
@@ -45,7 +45,6 @@ public class TestShapes {
         //Create a circle that is a child of line l2       
         CircularGameObject c2 = new CircularGameObject(p,0.25,white,white);     
         c2.translate(-1,0);
-       */
       
 	}
    
@@ -66,7 +65,7 @@ public class TestShapes {
 
         // Create a camera
         Camera camera = new Camera(GameObject.ROOT);
-        camera.setScale(2); // scale up the camera so we can see more of the world  
+        camera.setScale(2); // scale up the camera so we can see more of the world
               
         createTestShapes();
         
