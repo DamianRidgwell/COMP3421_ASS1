@@ -46,6 +46,10 @@ public class Camera extends GameObject {
         // TODO 2. set the view matrix to account for the camera's position
         gl.glMatrixMode(GL2.GL_PROJECTION);
         gl.glLoadIdentity();
+        double [] translate = getPosition();
+        gl.glTranslated(translate[0] * -1, translate[1] * -1, 0);
+        gl.glRotated(getRotation() * -1, 0, 0, 1);
+        gl.glScaled(1/getScale(), 1/getScale(), 1);
     }
 
     public void reshape(GL2 gl, int x, int y, int width, int height) {
